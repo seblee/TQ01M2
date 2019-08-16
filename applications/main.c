@@ -16,16 +16,24 @@
 #define LED0_PIN GET_PIN(C, 13)
 /* app version */
 #define APP_VERSION "1.0.0"
-
+void IIC_Capture_entry(void *parameter);
 int main(void)
 {
-    int count = 1;
+    rt_kprintf("APP_VERSION:%s\n", APP_VERSION);
+    /* user app entry */
+    rt_thread_t IIC_Capture;
+    IIC_Capture = rt_thread_create("IIC_Capture", IIC_Capture_entry, RT_NULL,
+                                   2560, 10, 20);
+    RT_ASSERT(IIC_Capture != RT_NULL);
+    if (IIC_Capture != RT_NULL)
+        rt_thread_startup(IIC_Capture);
+
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
 
-    rt_kprintf("APP_VERSION:%s\n", APP_VERSION);
 
-    while (count++)
+
+    while (1)
     {
         rt_pin_write(LED0_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
@@ -33,7 +41,7 @@ int main(void)
         rt_thread_mdelay(500);
     }
 
-    return RT_EOK;
+    // return RT_EOK;
 }
 
 /**
